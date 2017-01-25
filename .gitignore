@@ -3,6 +3,13 @@
 
 # Sensitive data
 lolpicker/sensitive.py
+loadscripts/riotAPI.py
 
 # Migrations
 **/migrations
+
+# Vim temp files
+**/*.swp
+
+# Dev database
+db.sqlite3

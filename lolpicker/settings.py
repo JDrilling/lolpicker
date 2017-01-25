@@ -24,6 +24,7 @@ from lolpicker.sensitive import SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASES
 # Application definition
 
 INSTALLED_APPS = [
+    'picker.apps.PickerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
