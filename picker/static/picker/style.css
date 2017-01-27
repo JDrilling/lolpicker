@@ -1,0 +1,17 @@
+.champion-list {
+  list-style-type: none;
+}
+
+.champion {
+  float: left;
+  padding: 5px;
+}
+
+.champion img {
+  width: 80px;
+  height: 80px;
+}
+
+.highlight {
+  background: red;
+}

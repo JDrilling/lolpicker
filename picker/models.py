@@ -13,14 +13,14 @@ class Game(models.Model):
     redTeam  = models.ForeignKey(Team, related_name="redTeam")
     blueTeam = models.ForeignKey(Team, related_name="blueTeam")
 
-    currentPickBanRound = models.PositiveIntegerField(default=0)
+    currentRound = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return "{} vs {}".format(self.redTeam.name, self.blueTeam.name)
 
 
 class Champion(models.Model):
-    lolID = models.PositiveIntegerField()
+    lolID = models.PositiveIntegerField(unique=True)
     name = models.CharField(max_length=30)
     imageURL = models.TextField()
 
@@ -48,9 +48,10 @@ class PickBanRound(models.Model):
     champion = models.ForeignKey(Champion, null=True, blank=True)
 
     def __str__(self):
-        return "{} - Round {} ({})".format(self.game,
+        return "{} - Round {} ({}): {}".format(self.game,
                                            self.roundNumber,
-                                           self.get_roundType_display())
+                                           self.get_roundType_display(),
+                                           self.champion)
 
     class Meta:
         unique_together = ("game", "roundNumber")
