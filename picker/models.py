@@ -29,27 +29,32 @@ class Champion(models.Model):
 
 
 class PickBanRound(models.Model):
-    RED_BAN   = "RB"
-    RED_PICK  = "RP"
-    BLUE_BAN  = "BB"
-    BLUE_PICK = "BP"
+    RED = "R"
+    BLUE = "B"
+    PICK = "P"
+    BAN = "B"
 
-    PICK_BAN_ROUND_TYPES = (
-            (RED_BAN,   "Red Ban"),
-            (RED_PICK,  "Red Pick"),
-            (BLUE_BAN,  "Blue Ban"),
-            (BLUE_PICK, "Blue Pick"),
-        )
+    SIDES = (
+        (RED, "Red"),
+        (BLUE, "Blue"),
+    )
+
+    ROUND_TYPES = (
+        (PICK, "Pick"),
+        (BAN, "Ban"),
+    )
 
     game = models.ForeignKey(Game)
 
     roundNumber = models.PositiveIntegerField()
-    roundType = models.CharField(max_length=2, choices=PICK_BAN_ROUND_TYPES)
+    roundType = models.CharField(max_length=1, choices=ROUND_TYPES)
+    side = models.CharField(max_length=1, choices=SIDES)
     champion = models.ForeignKey(Champion, null=True, blank=True)
 
     def __str__(self):
-        return "{} - Round {} ({}): {}".format(self.game,
+        return "{} - Round {} ({} {}): {}".format(self.game,
                                            self.roundNumber,
+                                           self.get_side_display(),
                                            self.get_roundType_display(),
                                            self.champion)
 

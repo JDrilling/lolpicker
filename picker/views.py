@@ -27,9 +27,11 @@ class GameView(SingleObjectMixin, View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            responseData = {'error': "Please log in!"}
+            return JsonResponse(responseData, status=403)
+
         self.object = self.get_object()
-        print(request)
-        print(request.POST)
         postData = request.POST
 
         if 'id' not in postData:
@@ -56,6 +58,17 @@ class GameView(SingleObjectMixin, View):
         if currentRound is None:
             responseData = {'error': "Unexpected round!"}
             return JsonResponse(responseData, status=500)
+
+        # Make sure it's the captain making the picks and bans
+        if currentRound.side == PickBanRound.BLUE:
+            if self.object.blueTeam.captain != request.user:
+                responseData = {'error': "You are not the captian of this team!"}
+                return JsonResponse(responseData, status=403)
+        elif currentRound.side == PickBanRound.RED:
+            if self.object.redTeam.captain != request.user:
+                responseData = {'error': "You are not the captian of this team!"}
+                return JsonResponse(responseData, status=403)
+
 
         championSelected = Champion.objects.get(lolID=lolID)
         championsUsed = [r.champion for r in pbrs]
