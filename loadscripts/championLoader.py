@@ -35,10 +35,10 @@ def loadAllChampions():
 
         if new:
             changed = True
-        elif champ.name != championName:
+        if champ.name != championName:
             changed = True
             champ.name=championName
-        elif champ.imageURL != imageURL:
+        if champ.imageURL != imageURL:
             changed = True
             champ.imageURL=imageURL
 
