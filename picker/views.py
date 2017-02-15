@@ -25,7 +25,7 @@ class GameView(SingleObjectMixin, View):
         context['champions'] = Champion.objects.all().order_by("name")
 
         return render(request, self.template_name, context)
-
+'''
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             responseData = {'error': "Please log in!"}
@@ -92,7 +92,7 @@ class GameView(SingleObjectMixin, View):
                         'done': done}
 
         return JsonResponse(responseData)
-
+'''
 
 class NewGameView(FormView):
     template_name = "picker/game_form.html"

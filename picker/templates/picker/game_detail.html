@@ -8,17 +8,48 @@
 {% endblock extra_head %}
 
 {% block content %}
-    <h1> Game </h1>
-    <p>{{ game.redTeam }} vs {{ game.blueTeam }} </p>
+<h1> Game </h1>
+<p>{{ game.redTeam }} vs {{ game.blueTeam }} </p>
 
-    <input id="champion-search" name="champion-search" placeholder="Start typing here" type="text" data-toggle="hideseek" data-list=".champion-list" />
-    <input id="champion-confirm" type="button" value="Lock in!" />
+
+<div id="container">
+  <div class="sidebar" id="blue-side">
+    <div class="teamname bluename">
+      {{ game.blueTeam }}
+    </div>
+    <div class="picks">
+    </div>
+    <div class="bans">
+    </div>
+  </div>
+
+  <div id="champion-select">
+    <div id="select-header">
+      <div id="clock">
+      </div>
+      <div id="search">
+        <input id="champion-search" name="champion-search" placeholder="Start typing here" type="text" data-toggle="hideseek" data-list=".champion-list" />
+        <input id="champion-confirm" type="button" value="Lock in!" />
+      </div>
+    </div>
     <ul class="champion-list">
-    {% for champ in champions %}
-      <li class="champion" id="{{ champ.lolID }}">
-        <img src="{{ champ.imageURL }}"/>
-        <div>{{ champ.name }}</div>
+      {% for champ in champions %}
+      <li class="champion" champion-id="{{ champ.lolID }}">
+        <img class="portrait" src="{{ champ.imageURL }}"/>
+        <div class="champion-name">{{ champ.name }}</div>
       </li>
-    {% endfor %}
+      {% endfor %}
     </ul>
+  </div>
+
+  <div class="sidebar" id="red-side">
+    <div class="teamname redname">
+      {{ game.redTeam }}
+    </div>
+    <div class="picks">
+    </div>
+    <div class="bans">
+    </div>
+  </div>
+</div>
 {% endblock content %}

@@ -1,17 +1,90 @@
+#container {
+  margin: auto;
+}
+
+#select-header {
+  width: 100%;
+}
+
+#clock {
+  float: left;
+}
+
+#search {
+  float: right;
+}
+
+#champion-select {
+  width: 1000px;
+  display: inline-block;
+  margin: auto;
+}
+
 .champion-list {
   list-style-type: none;
+  display: inline-block;
 }
 
 .champion {
   float: left;
-  padding: 5px;
-}
-
-.champion img {
-  width: 80px;
-  height: 80px;
+  padding: 3px;
 }
 
 .highlight {
   background: red;
+}
+
+.champion-name {
+  font-size: 8pt;
+}
+
+.sidebar {
+  width: 100px;
+  display: inline-block;
+  margin: 2px;
+  vertical-align: top;
+}
+
+#blue-side.sidebar {
+  border-style: solid;
+  border-width: 2px;
+  border-color: blue;
+}
+
+#red-side.sidebar {
+  border-style: solid;
+  border-width: 2px;
+  border-color: red;
+}
+
+.teamname {
+  text-align: center;
+}
+
+.bluename {
+  text-color: blue;
+}
+
+.redname {
+  text-color: red;
+}
+
+.round {
+  margin: auto;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  width: 70px;
+}
+
+.bans {
+  text-align: center;
+}
+
+.picks {
+  text-align: center;
+}
+
+.portrait {
+  width: 65px;
+  height: 65px;
 }

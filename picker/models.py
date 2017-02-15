@@ -35,13 +35,13 @@ class PickBanRound(models.Model):
     BAN = "B"
 
     SIDES = (
-        (RED, "Red"),
-        (BLUE, "Blue"),
+        (RED, "red"),
+        (BLUE, "blue"),
     )
 
     ROUND_TYPES = (
-        (PICK, "Pick"),
-        (BAN, "Ban"),
+        (PICK, "pick"),
+        (BAN, "ban"),
     )
 
     game = models.ForeignKey(Game)
