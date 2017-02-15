@@ -1,5 +1,6 @@
 # Cached python
 **/__pycache__
+*.pyc
 
 # Sensitive data
 lolpicker/sensitive.py
