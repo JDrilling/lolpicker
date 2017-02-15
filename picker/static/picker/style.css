@@ -1,13 +1,12 @@
 #container {
-  margin: auto;
+  text-align: center;
 }
 
 #select-header {
-  width: 100%;
 }
 
 #clock {
-  float: left;
+  display: inline;
 }
 
 #search {
@@ -17,7 +16,6 @@
 #champion-select {
   width: 1000px;
   display: inline-block;
-  margin: auto;
 }
 
 .champion-list {
