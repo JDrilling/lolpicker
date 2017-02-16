@@ -161,6 +161,7 @@ $(function() {
   });
 
   $('#start-game').click(function(e) {
+    $(this).hide();
     message = {
       'type': 'start',
     };

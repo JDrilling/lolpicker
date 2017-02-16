@@ -5,6 +5,7 @@ import sched
 from channels import Group
 from django.db.transaction import atomic
 from picker.models import PickBanRound as PBR, Game, Champion
+from django.core.exceptions import ObjectDoesNotExist
 
 RED_BAN = PBR.RED + PBR.BAN
 RED_PICK = PBR.RED + PBR.PICK
@@ -94,8 +95,9 @@ def validatePick(gameID, pickID, user):
             return "You are not the captain of this team."
 
     # Champion was not previously selected
-    championsUsed = set([r.champion.lolID for r in pbrs if r.champion is not None])
-    if pickID in championsUsed:
+    championsUsed = {r.champion.lolID for r in pbrs if r.champion is not None}
+    if int(pickID) in championsUsed:
+        print('here')
         return "Champion was already picked or banned."
 
     return None
@@ -138,10 +140,11 @@ def makePick(gameID, pickID):
     game.currentRound = roundNumber
     game.save()
 
-    nextRound = PBR.objects.get(game=game, roundNumber=roundNumber)
-
-    if nextRound:
+    try:
+        nextRound = PBR.objects.get(game=game, roundNumber=roundNumber)
         startRound(game, nextRound)
+    except ObjectDoesNotExist:
+        return None
 
     return None
 
@@ -161,11 +164,17 @@ def getRoundsData(game):
 def getGameData(gameID):
     game = Game.objects.get(id=gameID)
     roundsData = getRoundsData(game)
-    currentRound = game.currentRound
-    expiration = PBR.objects.get(game=game, roundNumber=currentRound).expiration
+    currentRoundNumber = game.currentRound
+    expiration = 0
+
+    try:
+        currentRound = PBR.objects.get(game=game, roundNumber=currentRoundNumber)
+        expiration = currentRound.expiration
+    except ObjectDoesNotExist:
+        expiration = time.time()
 
     gameData = {
-        'currentRound': currentRound,
+        'currentRound': currentRoundNumber,
         'expiration': expiration,
         'rounds': roundsData,
     }
@@ -196,9 +205,11 @@ def timeOutRound(gameID, roundNumber):
         game.currentRound = nextRoundNumber
         game.save()
 
-        nextRound = PBR.objects.get(game=game, roundNumber=nextRoundNumber)
-        if nextRound:
+        try:
+            nextRound = PBR.objects.get(game=game, roundNumber=nextRoundNumber)
             startRound(game, nextRound)
+        except ObjectDoesNotExist:
+            pass
 
         responseData = getGameData(gameID)
         sendSuccess(Group(str(gameID)), responseData)

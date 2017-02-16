@@ -8,13 +8,15 @@
 {% endblock extra_head %}
 
 {% block content %}
-<h1> Game </h1>
+<div id="header">
+  <h1> Game </h1>
 
-{% if user.is_staff or user == game.blueTeam.captain or user == game.redTeam.captain %}
-  {% if not game.started %}
-<input id="start-game" type="button" value="Start game!" />
+  {% if user.is_staff or user == game.blueTeam.captain or user == game.redTeam.captain %}
+    {% if not game.started %}
+  <input id="start-game" type="button" value="Start game!" />
+    {% endif %}
   {% endif %}
-{% endif %}
+</div>
 
 
 <div id="container">
