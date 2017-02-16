@@ -59,17 +59,22 @@ function Picker () {
       clearInterval(this.clockInterval);
     }
 
+    var now = Math.round(new Date().getTime() / 1000);
+    var secondsLeft = endTimestamp - now;
+    var clockEle = $('#clock');
+    console.log(endTimestamp);
+    console.log(now);
+    console.log(secondsLeft);
+
     var clockInterval = setInterval(function() {
-      var now = new Date().getTime();
-      var secondsLeft = Math.floor((endTimestamp - now) / (1000));
-      var clockEle = $('#clock');
 
       if (secondsLeft <= 0) {
         clockEle.text(0);
         clearInterval(clockInterval);
+      } else {
+        clockEle.text(secondsLeft);
+        secondsLeft -= 1
       }
-
-      clockEle.text(secondsLeft);
     }, 1000);
 
     this.clockInterval = clockInterval;
@@ -77,7 +82,10 @@ function Picker () {
 
   this.updateUI = function (data) {
     rounds = data.rounds;
-    used = [];
+    // Removes the blank champion.
+    // TODO: Find a better solution.
+    // Maybe grab image urls from elsewhere.
+    used = [0];
     for (roundNumber in rounds) {
       let round = rounds[roundNumber];
       if (round.championID !== null) {
@@ -87,7 +95,7 @@ function Picker () {
 
     this.updateRounds(rounds);
     this.updateChampionSearch(used);
-    this.updateClock(new Date().getTime() + 3 * 1000);
+    this.updateClock(data.expiration);
   };
 }
 
@@ -145,9 +153,17 @@ $(function() {
     var selectedID = $('.champion.highlight').attr('champion-id');
     message = {
       'pick': selectedID,
+      'type': 'pick',
     };
 
     socket.send(JSON.stringify(message));
 
+  });
+
+  $('#start-game').click(function(e) {
+    message = {
+      'type': 'start',
+    };
+    socket.send(JSON.stringify(message));
   });
 });

@@ -13,6 +13,7 @@ class Game(models.Model):
     redTeam  = models.ForeignKey(Team, related_name="redTeam")
     blueTeam = models.ForeignKey(Team, related_name="blueTeam")
 
+    started = models.BooleanField(default=False)
     currentRound = models.PositiveIntegerField(default=0)
 
     def __str__(self):
@@ -50,6 +51,9 @@ class PickBanRound(models.Model):
     roundType = models.CharField(max_length=1, choices=ROUND_TYPES)
     side = models.CharField(max_length=1, choices=SIDES)
     champion = models.ForeignKey(Champion, null=True, blank=True)
+
+    duration = models.PositiveIntegerField()
+    expiration = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return "{} - Round {} ({} {}): {}".format(self.game,

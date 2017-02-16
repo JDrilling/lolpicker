@@ -1,5 +1,9 @@
 import json
-from django.db.models import F
+import time
+import threading
+import sched
+from channels import Group
+from django.db.transaction import atomic
 from picker.models import PickBanRound as PBR, Game, Champion
 
 RED_BAN = PBR.RED + PBR.BAN
@@ -14,17 +18,32 @@ TEN_BAN_SCHEME = [BLUE_BAN,  RED_BAN,   BLUE_BAN,
                   RED_BAN,   BLUE_BAN,  RED_BAN,   BLUE_BAN, # End Ban 2
                   RED_PICK,  BLUE_PICK, BLUE_PICK, RED_PICK] # End Pick 2
 
-def createNewTenBanGame(game):
+BAN_DURATION = 30
+PICK_DURATION = 30
+
+@atomic
+def createNewTenBanGame(redTeam, blueTeam):
+    game = Game(redTeam=redTeam, blueTeam=blueTeam, started=False)
+    game.save()
+
     rounds = []
 
     for number, typ in enumerate(TEN_BAN_SCHEME):
-        pbRound = PBR(game=game, roundNumber=number, roundType=typ[1], side=typ[0])
+        duration = 0
+        if typ[1] == PBR.PICK:
+            duration = PICK_DURATION
+        else:
+            duration = BAN_DURATION
+
+        pbRound = PBR(game=game, roundNumber=number, roundType=typ[1], side=typ[0], duration=duration)
 
         rounds.append(pbRound)
 
-
     for r in rounds:
         r.save()
+
+    return game
+
 
 def validatePick(gameID, pickID, user):
     # User is logged in
@@ -48,10 +67,10 @@ def validatePick(gameID, pickID, user):
         return "No game metadata."
 
     # Picks have started
-    roundNumber = game.currentRound
-    if roundNumber < 0:
+    if not game.started:
         return "Picks and bans have not started for this game."
 
+    roundNumber = game.currentRound
     # Picks have not finished
     if roundNumber >= len(pbrs):
         return "Picks and bans have already finished!"
@@ -60,6 +79,11 @@ def validatePick(gameID, pickID, user):
     currentRound = pbrs.get(roundNumber=roundNumber)
     if currentRound is None:
         return "Unexpected round..."
+
+    # Round is not over
+    curTime = int(time.time())
+    if curTime > currentRound.expiration:
+        return "You can no longer pick for this round!"
 
     # Check that the user is the captain of the picking team
     if currentRound.side == PBR.BLUE:
@@ -76,6 +100,27 @@ def validatePick(gameID, pickID, user):
 
     return None
 
+def startRound(game, rnd):
+    curTime = round(time.time())
+    rnd.expiration = rnd.duration + curTime
+    rnd.save()
+
+    scheduler = sched.scheduler(time.time, time.sleep)
+    scheduler.enterabs(rnd.expiration, 1, timeOutRound, (game.id, rnd.roundNumber))
+    threading.Thread(target=scheduler.run, daemon=True).start()
+
+
+def startPicking(gameID):
+    # Signal the game has started
+    game = Game.objects.get(id=gameID)
+    game.started = True
+    game.currentRound = 0
+    game.save()
+
+    # Signal the round has started
+    firstRound = PBR.objects.get(game=game, roundNumber=0)
+    startRound(game, firstRound)
+
 def makePick(gameID, pickID):
     game = Game.objects.get(id=gameID)
     champion = Champion.objects.get(lolID=pickID)
@@ -87,14 +132,20 @@ def makePick(gameID, pickID):
     currentRound.champion = champion
     currentRound.save()
 
+    roundNumber = roundNumber + 1
+
     # Start next round
-    game.currentRound = F('currentRound') + 1
+    game.currentRound = roundNumber
     game.save()
+
+    nextRound = PBR.objects.get(game=game, roundNumber=roundNumber)
+
+    if nextRound:
+        startRound(game, nextRound)
 
     return None
 
-def getRoundsData(gameID):
-    game = Game.objects.get(id=gameID)
+def getRoundsData(game):
     pbrs = PBR.objects.filter(game=game)
 
     roundData = {}
@@ -107,6 +158,20 @@ def getRoundsData(gameID):
 
     return roundData
 
+def getGameData(gameID):
+    game = Game.objects.get(id=gameID)
+    roundsData = getRoundsData(game)
+    currentRound = game.currentRound
+    expiration = PBR.objects.get(game=game, roundNumber=currentRound).expiration
+
+    gameData = {
+        'currentRound': currentRound,
+        'expiration': expiration,
+        'rounds': roundsData,
+    }
+
+    return gameData
+
 def sendError(channel, error):
     response = { 'success': False,
                  'error': error,
@@ -118,3 +183,22 @@ def sendSuccess(channel, data):
                  'data': data,
                }
     channel.send({'text': json.dumps(response)})
+
+def timeOutRound(gameID, roundNumber):
+    game = Game.objects.get(id=gameID)
+    rnd = PBR.objects.get(game=game, roundNumber=roundNumber)
+
+    if game.currentRound == roundNumber:
+        rnd.champion = Champion.objects.get(lolID=0)
+        rnd.save()
+
+        nextRoundNumber = roundNumber + 1
+        game.currentRound = nextRoundNumber
+        game.save()
+
+        nextRound = PBR.objects.get(game=game, roundNumber=nextRoundNumber)
+        if nextRound:
+            startRound(game, nextRound)
+
+        responseData = getGameData(gameID)
+        sendSuccess(Group(str(gameID)), responseData)

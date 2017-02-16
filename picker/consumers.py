@@ -1,8 +1,9 @@
 import json
 from channels import Group
 from channels.auth import channel_session_user_from_http, channel_session_user
+from .models import Game
 from .utils import validatePick, makePick, sendError,\
-                   sendSuccess, getRoundsData
+                   sendSuccess, getGameData, startPicking
 
 
 @channel_session_user_from_http
@@ -10,41 +11,56 @@ def pick_connect(message, **kwargs):
     message.reply_channel.send({'accept': True})
 
     gameID = kwargs['pk']
-    roundData = getRoundsData(gameID)
-    responseData = {'rounds': roundData}
+    responseData = getGameData(gameID)
 
     sendSuccess(message.reply_channel, responseData)
-    Group(kwargs['pk']).add(message.reply_channel)
+    Group(gameID).add(message.reply_channel)
 
 @channel_session_user
 def pick_receive(message, **kwargs):
     user = message.user
-    messageJSON = json.loads(message.content['text'])
-    pickID = messageJSON.get('pick')
+    eventJSON = json.loads(message.content['text'])
+    eventType = eventJSON['type']
     gameID = kwargs['pk']
 
-    response = {}
+    if eventType == 'start':
+        game = Game.objects.get(id=gameID)
+        if user == game.blueTeam.captain or user == game.redTeam.captain or user.is_staff:
+            startPicking(gameID)
+            responseData = getGameData(gameID)
+            sendSuccess(Group(gameID), responseData)
+            return
+        else:
+            error = "You cannot start this game!"
+            sendError(message.reply_channel, error)
+            return
+    elif eventType == 'pick':
 
-    # Validate the pick
-    error = validatePick(gameID, pickID, user)
+        pickID = eventJSON.get('pick')
+        response = {}
 
-    if error is not None:
-        sendError(message.reply_channel, error)
+        # Validate the pick
+        error = validatePick(gameID, pickID, user)
+
+        if error is not None:
+            sendError(message.reply_channel, error)
+            return
+
+        # Try to make the pick
+        error = makePick(gameID, pickID)
+
+        if error is not None:
+            sendError(message.reply_channel, error)
+            return
+
+        # Send the response
+        responseData = getGameData(gameID)
+
+        sendSuccess(Group(gameID), responseData)
         return
-
-    # Try to make the pick
-    error = makePick(gameID, pickID)
-
-    if error is not None:
+    else:
+        error = "Unknown event type!"
         sendError(message.reply_channel, error)
-        return
-
-    # Send the response
-    roundData = getRoundsData(gameID)
-    responseData = {'rounds': roundData}
-
-    sendSuccess(Group(gameID), responseData)
-    return
 
 @channel_session_user
 def pick_disconnect(message, **kwargs):
