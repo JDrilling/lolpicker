@@ -9,17 +9,19 @@
 
 {% block content %}
 <h1> Game </h1>
-<p>{{ game.redTeam }} vs {{ game.blueTeam }} </p>
 
 
 <div id="container">
-  <div class="sidebar" id="blue-side">
-    <div class="teamname bluename">
+  <div class="sidebar">
+    <div class="teamname blue">
       {{ game.blueTeam }}
     </div>
-    <div class="picks">
+    <div class="blue picks">
     </div>
-    <div class="bans">
+    <div class="ban-title">
+      Bans
+    </div>
+    <div class="blue bans">
     </div>
   </div>
 
@@ -42,13 +44,16 @@
     </ul>
   </div>
 
-  <div class="sidebar" id="red-side">
-    <div class="teamname redname">
+  <div class="sidebar">
+    <div class="teamname red">
       {{ game.redTeam }}
     </div>
-    <div class="picks">
+    <div class="red picks">
     </div>
-    <div class="bans">
+    <div class="ban-title">
+      Bans
+    </div>
+    <div class="red bans">
     </div>
   </div>
 </div>

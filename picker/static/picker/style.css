@@ -1,8 +1,7 @@
 #container {
   text-align: center;
-}
-
-#select-header {
+  width: 1300px;
+  margin: auto;
 }
 
 #clock {
@@ -37,45 +36,61 @@
 }
 
 .sidebar {
-  width: 100px;
+  width: 135px;
   display: inline-block;
   margin: 2px;
   vertical-align: top;
 }
 
-#blue-side.sidebar {
+.blue.picks {
   border-style: solid;
   border-width: 2px;
-  border-color: blue;
+  border-color: mediumblue;
 }
 
-#red-side.sidebar {
+.red.picks {
   border-style: solid;
   border-width: 2px;
-  border-color: red;
+  border-color: maroon;
 }
 
 .teamname {
   text-align: center;
+  font: 14pt;
+  font-weight: bold;
 }
 
-.bluename {
-  text-color: blue;
+.teamname.blue {
+  color: royalblue;
 }
 
-.redname {
-  text-color: red;
+
+.teamname.red {
+  color: red;
 }
 
 .round {
   margin: auto;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  width: 70px;
+  margin-top: 7px;
+  margin-bottom: 7px;
+  width: 75px;
+}
+
+.round.ban {
+  display: inline;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 .bans {
   text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.ban-title {
+  font: 14pt;
+  font-weight: bold;
 }
 
 .picks {
@@ -83,6 +98,12 @@
 }
 
 .portrait {
-  width: 65px;
-  height: 65px;
+  width: 70px;
+  height: 70px;
+}
+
+.portrait.ban {
+  width: 40px;
+  height: 40px;
+  display: inline-block;
 }

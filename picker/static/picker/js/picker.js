@@ -13,21 +13,26 @@ function Picker () {
           var side = round.team;
           // Create the element.
           roundEle = $('<div></div>').addClass('round')
-                                     .attr('round-id', roundNum)
-                                     .append($('<img></img>').addClass('portrait'));
+                                     .attr('round-id', roundNum);
+          let portrait = $('<img></img>').addClass('portrait');
+          roundEle.append(portrait);
 
           // Add it to the correct sidebar.
           if (side.toLowerCase() == 'r') {
             if (round.type.toLowerCase() == 'p') {
-              $('#red-side .picks').append(roundEle);
+              $('.red.picks').append(roundEle);
             } else {
-              $('#red-side .bans').append(roundEle);
+              $('.red.bans').append(roundEle);
+              portrait.addClass('ban');
+              roundEle.addClass('ban');
             }
           } else {
             if (round.type.toLowerCase() == 'p') {
-              $('#blue-side .picks').append(roundEle);
+              $('.blue.picks').append(roundEle);
             } else {
-              $('#blue-side .bans').append(roundEle);
+              $('.blue.bans').append(roundEle);
+              portrait.addClass('ban');
+              roundEle.addClass('ban');
             }
           }
         }
