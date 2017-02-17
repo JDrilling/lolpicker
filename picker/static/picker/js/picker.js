@@ -90,6 +90,12 @@ function Picker () {
     $(".round[round-id='" + (currentRound + 1) + "']").addClass('ondeck');
   }
 
+  this.updateStartButton = function (started) {
+    if (started) {
+      $('#start-game').hide();
+    }
+  }
+
   this.updateUI = function (data) {
     rounds = data.rounds;
     // Removes the blank champion.
@@ -107,6 +113,7 @@ function Picker () {
     this.updateChampionSearch(used);
     this.updateClock(data.expiration);
     this.updateCurrentRound(data.currentRound);
+    this.updateStartButton(data.started);
   };
 }
 

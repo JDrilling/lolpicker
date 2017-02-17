@@ -177,6 +177,7 @@ def getGameData(gameID):
         'currentRound': currentRoundNumber,
         'expiration': expiration,
         'rounds': roundsData,
+        'started': game.started,
     }
 
     return gameData
