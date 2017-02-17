@@ -13,7 +13,6 @@
 }
 
 #container {
-  text-align: center;
   width: 1300px;
   margin: auto;
 }
@@ -35,6 +34,7 @@
 #champion-select {
   width: 1000px;
   display: inline-block;
+  text-align: none;
 }
 
 .champion-list {
@@ -43,8 +43,9 @@
 }
 
 .champion {
-  float: left;
   padding: 3px;
+  display: inline-block;
+  text-align: center;
 }
 
 .highlight {

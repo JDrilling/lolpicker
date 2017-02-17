@@ -175,7 +175,6 @@ $(function() {
     };
 
     socket.send(JSON.stringify(message));
-
   });
 
   $('#start-game').click(function(e) {
