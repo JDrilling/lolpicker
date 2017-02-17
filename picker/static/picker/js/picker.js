@@ -21,6 +21,8 @@ function Picker () {
           if (side.toLowerCase() == 'r') {
             if (round.type.toLowerCase() == 'p') {
               $('.red.picks').append(roundEle);
+              portrait.addClass('pick');
+              roundEle.addClass('pick');
             } else {
               $('.red.bans').append(roundEle);
               portrait.addClass('ban');
@@ -29,6 +31,8 @@ function Picker () {
           } else {
             if (round.type.toLowerCase() == 'p') {
               $('.blue.picks').append(roundEle);
+              portrait.addClass('pick');
+              roundEle.addClass('pick');
             } else {
               $('.blue.bans').append(roundEle);
               portrait.addClass('ban');
@@ -80,6 +84,12 @@ function Picker () {
     this.clockInterval = clockInterval;
   };
 
+  this.updateCurrentRound = function (currentRound) {
+    $('.round').removeClass('current').removeClass('ondeck');
+    $(".round[round-id='" + currentRound + "']").addClass('current');
+    $(".round[round-id='" + (currentRound + 1) + "']").addClass('ondeck');
+  }
+
   this.updateUI = function (data) {
     rounds = data.rounds;
     // Removes the blank champion.
@@ -96,6 +106,7 @@ function Picker () {
     this.updateRounds(rounds);
     this.updateChampionSearch(used);
     this.updateClock(data.expiration);
+    this.updateCurrentRound(data.currentRound);
   };
 }
 

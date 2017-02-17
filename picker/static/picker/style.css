@@ -84,17 +84,30 @@
   color: red;
 }
 
-.round {
+.round.pick {
   margin: auto;
   margin-top: 7px;
   margin-bottom: 7px;
-  width: 75px;
+  width: 70px;
+  height: 70px;
+}
+
+.round.current {
+  border: 3px solid gold;
+}
+
+.round.ondeck {
+  border: 3px solid grey;
 }
 
 .round.ban {
-  display: inline;
-  margin-left: 2px;
-  margin-right: 2px;
+  display: inline-block;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 1px;
+  margin-right: 1px;
+  width: 40px;
+  height: 40px;
 }
 
 .bans {
@@ -113,6 +126,11 @@
 }
 
 .portrait {
+  width: 70px;
+  height: 70px;
+}
+
+.portrait.pick {
   width: 70px;
   height: 70px;
 }
