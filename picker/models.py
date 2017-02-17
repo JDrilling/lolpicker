@@ -24,6 +24,7 @@ class Champion(models.Model):
     lolID = models.PositiveIntegerField(unique=True)
     name = models.CharField(max_length=30)
     imageURL = models.TextField()
+    staticAlias = models.TextField()
 
     def __str__(self):
         return str(self.name)

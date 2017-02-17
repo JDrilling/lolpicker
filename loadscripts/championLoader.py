@@ -1,5 +1,7 @@
 import requests
 import os
+import shutil
+from urllib.request import urlopen
 from picker.models import Champion
 from loadscripts.riotAPI import KEY
 
@@ -9,7 +11,15 @@ CHAMPION_DATA_ENDPOINT = STATIC_DATA_ENDPOINT + "/champion"
 
 PARTIAL_IMAGE_URL = "http://ddragon.leagueoflegends.com/cdn/{version}/img/champion/{image}"
 
-LOCAL_STORAGE = os.path.join('..', 'picker', 'static', 'images', 'champions')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ALIAS = os.path.join('picker', 'images', 'champions')
+LOCAL_STORAGE = os.path.join(BASE_DIR, 'picker', 'static', STATIC_ALIAS)
+
+def getChampFile(champID):
+    return os.path.join(LOCAL_STORAGE, "{}.png".format(champID))
+
+def getStaticAlias(champID):
+    return os.path.join(STATIC_ALIAS, "{}.png".format(champID))
 
 def loadAllChampions():
     params = {}
@@ -28,6 +38,9 @@ def loadAllChampions():
         championName = data['name']
         imageName = data['image']['full']
         imageURL = PARTIAL_IMAGE_URL.format(version=version, image=imageName)
+        localPath = getChampFile(ID)
+        staticAlias = getStaticAlias(ID)
+
 
         champ, new = Champion.objects.get_or_create(lolID=ID)
 
@@ -37,11 +50,17 @@ def loadAllChampions():
             changed = True
         if champ.name != championName:
             changed = True
-            champ.name=championName
+            champ.name = championName
         if champ.imageURL != imageURL:
             changed = True
-            champ.imageURL=imageURL
+            champ.imageURL = imageURL
+        if champ.staticAlias != staticAlias:
+            changed = True
+            champ.staticAlias = staticAlias
 
         if changed:
+            with urlopen(imageURL) as response, open(localPath, 'wb') as imageFile:
+                shutil.copyfileobj(response, imageFile)
+
             champ.save()
             print("New champion: {}".format(champ))
