@@ -39,7 +39,9 @@
       </div>
       <div id="search">
         <input id="champion-search" name="champion-search" placeholder="Start typing here" type="text" data-toggle="hideseek" data-list=".champion-list" />
+        {% if user == game.redTeam.captain or user == game.blueTeam.captain %}
         <input id="champion-confirm" type="button" value="Lock in!" />
+        {% endif %}
       </div>
     </div>
     <ul class="champion-list">

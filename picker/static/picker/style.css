@@ -10,10 +10,21 @@
 
 #clock {
   display: inline;
+  font: bold 25px sans-serif;
 }
 
 #search {
   float: right;
+  vertical-align: center;
+}
+
+#champion-search {
+  height: 20px;
+}
+
+#champion-confirm {
+  font-size: 14px;
+  padding: 3px 18px;
 }
 
 #champion-select {
