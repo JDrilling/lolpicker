@@ -2,15 +2,20 @@
   text-align: center;
 }
 
+#start-game {
+  position: absolute;
+}
+
+#clock {
+  display: block;
+  font: bold 25px sans-serif;
+  height: 25px;
+}
+
 #container {
   text-align: center;
   width: 1300px;
   margin: auto;
-}
-
-#clock {
-  display: inline;
-  font: bold 25px sans-serif;
 }
 
 #search {
@@ -93,11 +98,11 @@
 }
 
 .round.current {
-  border: 3px solid gold;
+  border: 4px outset darkseagreen;
 }
 
 .round.ondeck {
-  border: 3px solid grey;
+  border: 3px outset lightslategrey;
 }
 
 .round.ban {
