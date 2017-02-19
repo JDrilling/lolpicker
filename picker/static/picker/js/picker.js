@@ -3,6 +3,10 @@ function Picker () {
   this.championsUsed = [];
   this.clockInterval = null;
 
+  this.getPortraitSource = function (champID) {
+    return '/static/picker/images/champions/' + champID + '.png';
+  };
+
   this.updateRounds = function (rounds) {
     for (let roundNum in rounds) {
       if (rounds[roundNum] != this.rounds[roundNum]) {
@@ -10,7 +14,7 @@ function Picker () {
         let roundEle = $(".round[round-id='" + roundNum + "']");
         // If this is a new round.
         if (roundEle.length == 0) {
-          var side = round.team;
+          let side = round.team;
           // Create the element.
           roundEle = $('<div></div>').addClass('round')
                                      .attr('round-id', roundNum);
@@ -43,8 +47,7 @@ function Picker () {
 
         // Add the image.
         if (round.championID) {
-          var championHTML = $("[champion-id='" + round.championID + "']");
-          roundEle.find('img').attr('src', championHTML.find('img').attr('src'));
+          roundEle.find('img.portrait').attr('src', this.getPortraitSource(round.championID));
         }
       }
     }
@@ -53,7 +56,7 @@ function Picker () {
   this.updateChampionSearch = function (picked) {
     for (let c of picked) {
       var ele = $(".champion[champion-id='" + c + "']");
-      ele.hide();
+      ele.remove();
     }
     this.championsUsed = picked;
   };
@@ -98,10 +101,7 @@ function Picker () {
 
   this.updateUI = function (data) {
     rounds = data.rounds;
-    // Removes the blank champion.
-    // TODO: Find a better solution.
-    // Maybe grab image urls from elsewhere.
-    used = [0];
+    used = [];
     for (roundNumber in rounds) {
       let round = rounds[roundNumber];
       if (round.championID !== null) {

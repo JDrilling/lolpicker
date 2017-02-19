@@ -47,10 +47,12 @@
     </div>
     <ul class="champion-list">
       {% for champ in champions %}
+      {% if champ.lolID != 0 %}
       <li class="champion" champion-id="{{ champ.lolID }}">
         <img class="portrait" src="{% static champ.staticAlias %}"/>
         <div class="champion-name">{{ champ.name }}</div>
       </li>
+      {% endif %}
       {% endfor %}
     </ul>
   </div>
