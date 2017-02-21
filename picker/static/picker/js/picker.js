@@ -61,6 +61,29 @@ function Picker () {
     this.championsUsed = picked;
   };
 
+
+  this.updateClock = function (duration) {
+    if (this.clockInterval) {
+      clearInterval(this.clockInterval);
+    }
+
+    var secondsLeft = duration;
+    var clockEle = $('#clock');
+    console.log(secondsLeft);
+
+    var clockInterval = setInterval(function() {
+      if (secondsLeft <= 0) {
+        clockEle.text(0);
+        clearInterval(clockInterval);
+      } else {
+        clockEle.text(secondsLeft);
+        secondsLeft -= 1
+      }
+    }, 1000);
+
+  };
+
+  /*
   this.updateClock = function (endTimestamp) {
     if (this.clockInterval) {
       clearInterval(this.clockInterval);
@@ -86,6 +109,7 @@ function Picker () {
 
     this.clockInterval = clockInterval;
   };
+  */
 
   this.updateCurrentRound = function (currentRound) {
     $('.round').removeClass('current').removeClass('ondeck');
@@ -111,7 +135,7 @@ function Picker () {
 
     this.updateRounds(rounds);
     this.updateChampionSearch(used);
-    this.updateClock(data.expiration);
+    this.updateClock(data.duration);
     this.updateCurrentRound(data.currentRound);
     this.updateStartButton(data.started);
   };

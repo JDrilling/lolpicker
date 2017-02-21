@@ -166,16 +166,20 @@ def getGameData(gameID):
     roundsData = getRoundsData(game)
     currentRoundNumber = game.currentRound
     expiration = 0
+    duration = 0
 
     try:
         currentRound = PBR.objects.get(game=game, roundNumber=currentRoundNumber)
         expiration = currentRound.expiration
+        curTime = round(time.time())
+        duration = expiration - curTime
     except ObjectDoesNotExist:
         expiration = time.time()
 
     gameData = {
         'currentRound': currentRoundNumber,
         'expiration': expiration,
+        'duration': duration,
         'rounds': roundsData,
         'started': game.started,
     }
