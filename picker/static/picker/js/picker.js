@@ -81,6 +81,7 @@ function Picker () {
       }
     }, 1000);
 
+    this.clockInterval = clockInterval;
   };
 
   /*
