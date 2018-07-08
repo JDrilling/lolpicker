@@ -16,7 +16,7 @@ loadscripts/riotAPI.py
 db.sqlite3
 
 # Collected static files
-./static/
+static/*
 
 # Ignore the images
 images/
